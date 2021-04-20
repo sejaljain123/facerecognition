@@ -1,24 +1,52 @@
-import logo from './logo.svg';
 import './App.css';
+import React from 'react';
+import Navigation from './components/Navigation/Navigation';
+import Logo from './components/Logo/Logo';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import SignIn from './components/SignIn/SignIn';
+import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
+import Rank from './components/Rank/Rank';
+import Particles from 'react-particles-js';
+import Register from './components/Register/Register';
+
+const particlesOptions = {
+  particles: {
+    number: {
+      value: 40,
+      density: {
+        enable: true,
+        value_area: 500,
+      },
+    },
+  },
+};
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Particles className="particles" params={particlesOptions} />
+
+        <Route exact path="/signin">
+          <div>
+            <Navigation />
+            <SignIn />
+          </div>
+        </Route>
+
+        <Route exact path="/home">
+          <div>
+            <Navigation />
+            <Logo />
+            <Rank />
+            <ImageLinkForm />
+          </div>
+        </Route>
+        <Route exact path="/register">
+          <Register />
+        </Route>
+      </div>
+    </Router>
   );
 }
 
