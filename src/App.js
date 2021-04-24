@@ -32,22 +32,36 @@ class App extends Component {
     this.state = {
       input: '',
       imageUrl: '',
+      box: {},
       route: 'signin',
       isSignedIn: false,
     };
   }
-  3;
+  calculateFaceLocation = (data) => {
+    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+    const image = document.getElementById('inputimage');
+    const width = Number(image.width);
+    const height = Number(image.height);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - clarifaiFace.right_col * width,
+      bottomRow: height - clarifaiFace.bottom_row * height,
+    };
+  };
+  displayFaceBox = (box) => {
+    this.setState({ box: box });
+  };
   onInputChange = (e) => {
     this.setState({ input: e.target.value });
   };
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
-    app.models.predict(Clarifai.COLOR_MODEL, this.state.imageUrl).then(
-      function (response) {
-        console.log(response);
-      },
-      function (err) {}
-    );
+    app.models
+      .predict(Clarifai.FACE_DETECT_MODEL, this.state.imageUrl)
+      .then((response) =>
+        this.displayFaceBox(this.calculateFaceLocation(response)).catch((err) => console.log(err))
+      );
   };
   onRouteChange = (route) => {
     if (route === 'signout') {
@@ -72,7 +86,7 @@ class App extends Component {
               onInputChange={this.onInputChange}
               onButtonSubmit={this.onButtonSubmit}
             />
-            <FaceRecognition imageUrl={imageUrl} />
+            <FaceRecognition box={this.state.box} imageUrl={imageUrl} />
           </div>
         ) : route === 'signin' ? (
           <SignIn onRouteChange={this.onRouteChange} />
